@@ -1,4 +1,3 @@
-import csv
 import time
 import numpy as np
 import scipy.sparse as sp
@@ -8,7 +7,7 @@ import torch.nn as nn
 from torch import optim
 
 from read_data import read_data_structures
-from utils import normalize_adjacency, sparse_mx_to_torch_sparse_tensor
+from struct_utils import normalize_adjacency, sparse_mx_to_torch_sparse_tensor
 from struct_model import GNN
 from write_data import write_sub
 
