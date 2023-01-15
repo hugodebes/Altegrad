@@ -11,7 +11,9 @@ class ProteinLSTM(nn.Module):
         self.fc = nn.Linear(hidden_size, num_classes)
 
     def forward(self, x, lengths):
+        print(x.shape)
         x = self.embedding(x)
+        print(x.shape)
         x = nn.utils.rnn.pack_padded_sequence(
             x, lengths, batch_first=True, enforce_sorted=False
         )
