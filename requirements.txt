@@ -5,3 +5,4 @@ torch
 scipy
 ipykernel
 torch-geometric
+protlearn
