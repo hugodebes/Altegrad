@@ -31,10 +31,10 @@ def read_data_structures():
     """
     Function that loads graphs
     """
-    graph_indicator = np.loadtxt("graph_indicator.txt", dtype=np.int64)
+    graph_indicator = np.loadtxt("data/graph_indicator.txt", dtype=np.int64)
     _, graph_size = np.unique(graph_indicator, return_counts=True)
 
-    edges = np.loadtxt("edgelist.txt", dtype=np.int64, delimiter=",")
+    edges = np.loadtxt("data/edgelist.txt", dtype=np.int64, delimiter=",")
     edges_inv = np.vstack((edges[:, 1], edges[:, 0]))
     edges = np.vstack((edges, edges_inv.T))
     s = edges[:, 0] * graph_indicator.size + edges[:, 1]
@@ -46,8 +46,8 @@ def read_data_structures():
         shape=(graph_indicator.size, graph_indicator.size),
     )
 
-    x = np.loadtxt("node_attributes.txt", delimiter=",")
-    edge_attr = np.loadtxt("edge_attributes.txt", delimiter=",")
+    x = np.loadtxt("data/node_attributes.txt", delimiter=",")
+    edge_attr = np.loadtxt("data/edge_attributes.txt", delimiter=",")
     edge_attr = np.vstack((edge_attr, edge_attr))
     edge_attr = edge_attr[idx_sort, :]
     edge_attr = edge_attr[idx_unique, :]
@@ -99,13 +99,13 @@ def read_data_without_unnatural():
                 sequences_train.append(sequences[i])
                 y_train.append(int(t[1][:-1]))
 
-    #Remove unnatural amino acid
+    # Remove unnatural amino acid
     for i, sequences in enumerate(sequences_train):
-        if 'X' in sequences:
-            sequences_train[i] = sequences.replace("X","") 
+        if "X" in sequences:
+            sequences_train[i] = sequences.replace("X", "")
 
     for i, sequences in enumerate(sequences_test):
-        if 'X' in sequences:
-            sequences_test[i] = sequences.replace("X","")    
+        if "X" in sequences:
+            sequences_test[i] = sequences.replace("X", "")
 
     return sequences_train, sequences_test, proteins_test, y_train, idx_train
