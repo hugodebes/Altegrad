@@ -73,3 +73,39 @@ def read_list(file_name):
     with open(file_name, "rb") as fp:
         n_list = pickle.load(fp)
         return n_list
+
+
+def read_data_without_unnatural():
+    # Read sequences
+    sequences = list()
+    with open("data/sequences.txt", "r") as f:
+        for line in f:
+            sequences.append(line[:-1])
+
+    # Split data into training and test sets
+    sequences_train = list()
+    sequences_test = list()
+    proteins_test = list()
+    y_train = list()
+    idx_train = list()
+    with open("data/graph_labels.txt", "r") as f:
+        for i, line in enumerate(f):
+            t = line.split(",")
+            if len(t[1][:-1]) == 0:
+                proteins_test.append(t[0])
+                sequences_test.append(sequences[i])
+            else:
+                idx_train.append(i)
+                sequences_train.append(sequences[i])
+                y_train.append(int(t[1][:-1]))
+
+    #Remove unnatural amino acid
+    for i, sequences in enumerate(sequences_train):
+        if 'X' in sequences:
+            sequences_train[i] = sequences.replace("X","") 
+
+    for i, sequences in enumerate(sequences_test):
+        if 'X' in sequences:
+            sequences_test[i] = sequences.replace("X","")    
+
+    return sequences_train, sequences_test, proteins_test, y_train, idx_train
