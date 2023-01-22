@@ -5,7 +5,7 @@ from sklearn.preprocessing import RobustScaler
 
 def mapping(sequences_train, sequences_test):
 
-    vec = TfidfVectorizer(analyzer='char', ngram_range=(1, 3))
+    vec = TfidfVectorizer(analyzer='char', ngram_range=(1, 4))
     X_train = vec.fit_transform(sequences_train)
     X_test = vec.transform(sequences_test)
 
