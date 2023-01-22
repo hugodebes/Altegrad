@@ -2,8 +2,6 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from torch_geometric.nn import GCNConv
-
 
 class AttentionWithContext(nn.Module):
     """
@@ -62,12 +60,12 @@ class AttentionWithContext(nn.Module):
 
 
 class AttentionBiGRU(nn.Module):
-    def __init__(self, input_shape, n_units, id_to_aa, dropout=0):
+    def __init__(self, input_shape, n_units, id_to_aa, dropout, d):
         super(AttentionBiGRU, self).__init__()
-        self.embedding = nn.Embedding(len(id_to_aa) + mfw_idx,
+        self.embedding = nn.Embedding(len(id_to_aa) + 1,
                                       d, 
                                       padding_idx=0)
-        self.dropout = nn.Dropout(drop_rate)
+        self.dropout = nn.Dropout(dropout)
         self.gru = nn.GRU(input_size=d,  
                           hidden_size=n_units,
                           num_layers=1,
@@ -110,11 +108,11 @@ class TimeDistributed(nn.Module):
 
 
 class HAN(nn.Module):
-    def __init__(self, input_shape, n_units, id_to_aa, dropout=0):
+    def __init__(self, input_shape, n_units, id_to_aa, d, dropout):
         super(HAN, self).__init__()
-        self.encoder = AttentionBiGRU(input_shape, n_units, id_to_aa, dropout)
+        self.encoder = AttentionBiGRU(input_shape, n_units, id_to_aa, dropout, d)
         self.timeDistributed = TimeDistributed(self.encoder, True)
-        self.dropout = nn.Dropout(drop_rate)
+        self.dropout = nn.Dropout(dropout)
         self.gru = nn.GRU(input_size=n_units*2,
                           hidden_size=n_units,
                           num_layers=1,

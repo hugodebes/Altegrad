@@ -9,15 +9,18 @@ import torch.optim as optim
 
 from models.deep_learning.HAN import HAN
 from models.deep_learning.LSTM import LSTMClassifier
-
 from utils.read_data import read_data_sequences
+from sequence_train_eval import train
+
+from torch.utils.data import DataLoader, Dataset
+from sklearn.model_selection import train_test_split
 
 
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-model_type = "LSTM"  
-#model_type = "HAN"  
+#model_type = "LSTM"  
+model_type = "HAN"  
 
 
 class Dataset_(Dataset):
@@ -52,7 +55,7 @@ def get_loader(x, y, batch_size=32):
 def main():
 
     #Read the data
-    sequences_train, sequences_test, proteins_test, y_train = read_data_sequence()
+    sequences_train, sequences_test, proteins_test, y_train = read_data_sequences()
 
     if model_type == "LSTM": 
 
@@ -73,16 +76,16 @@ def main():
         X_train, X_valid, y_train, y_valid = train_test_split(sequences_train, torch.Tensor(y_train), test_size=0.2)
         input_size = X_train.shape
 
-        training_set = Dataset_(X_train, y_train)
-        test_set = Dataset_(X_valid, y_valid)
-        loader_training = DataLoader(training_set, batch_size=batch_size)
-        loader_test = DataLoader(test_set)
-
         # Hyperparameters
         batch_size = 64
         hidden_dim = 30
         lstm_layers = 2
         max_epochs = 15
+
+        training_set = Dataset_(X_train, y_train)
+        test_set = Dataset_(X_valid, y_valid)
+        loader_training = DataLoader(training_set, batch_size=batch_size)
+        loader_test = DataLoader(test_set)
 
         model = LSTMClassifier(batch_size, hidden_dim, lstm_layers, length_padding)
         lr = 0.001  # learning rate
@@ -115,23 +118,20 @@ def main():
         X_train, X_valid, y_train, y_valid = train_test_split(sequences_train, torch.Tensor(y_train), test_size=0.2)
         input_size = X_train.shape
 
+        # Hyperparameters
+        d = 100 # dimensionality of word embeddings
+        n_units = 30 # RNN layer dimensionality
+        drop_rate = 0.5 # dropout
+        padding_idx = 0
+        batch_size = 64
+        max_epochs = 50
+
         training_set = Dataset_(X_train, y_train)
         test_set = Dataset_(X_valid, y_valid)
         loader_training = DataLoader(training_set, batch_size=batch_size)
         loader_test = DataLoader(test_set)
 
-
-        # Hyperparameters
-        d = 100 # dimensionality of word embeddings
-        n_units = 30 # RNN layer dimensionality
-        drop_rate = 0.5 # dropout
-        mfw_idx = 1 
-        padding_idx = 0
-        batch_size = 64
-        max_epochs = 50
-        my_patience = 5 # for early stopping strategy
-
-        model = HAN(input_size, n_units, id_to_aa)
+        model = HAN(input_size, n_units, id_to_aa, d, drop_rate)
         lr = 0.001  # learning rate
         criterion = nn.CrossEntropyLoss()
         optimizer = torch.optim.Adam(model.parameters(), lr=lr)
