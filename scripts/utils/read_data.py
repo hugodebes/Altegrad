@@ -1,5 +1,6 @@
 import numpy as np
 import scipy.sparse as sp
+import pickle
 
 
 def read_data_sequences():
@@ -64,3 +65,11 @@ def read_data_structures():
         idx_m += adj[i].nnz
 
     return adj, features, edge_features
+
+
+# Read list to memory
+def read_list(file_name):
+    # for reading also binary mode is important
+    with open(file_name, "rb") as fp:
+        n_list = pickle.load(fp)
+        return n_list
