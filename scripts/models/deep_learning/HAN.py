@@ -84,7 +84,7 @@ class AttentionBiGRU(nn.Module):
         part_wa, _ = self.gru(part_wv_dr) # RNN layer
         part_att_vec, aa_att_coeffs = self.attention(part_wa)
         part_att_vec_dr = self.dropout(part_att_vec)     
-        return spart_att_vec_dr, aa_att_coeffs
+        return part_att_vec_dr, aa_att_coeffs
 
 
 class TimeDistributed(nn.Module):
